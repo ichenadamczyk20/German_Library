@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+use FindBin;
+
+$line = <STDIN>;
+
+chomp($line);
+
+$notNeeded = qx!echo "$line" >> $FindBin::Bin/../__init__!;
