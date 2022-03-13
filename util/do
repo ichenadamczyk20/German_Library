@@ -2,9 +2,29 @@
 use FindBin;
 use feature qw(say);
 
+$filename = "$FindBin::Bin/../__init__";
+sub ReplaceLine {
+	use integer;
+	open my $in, '<', $filename or die $!;
+	open my $out, '>', "$filename.new" or die $!;
+	say("replace line " . @_[0]);
+	while (<$in>) {
+		print $out $_;
+		last if $. == @_[0];
+	}
+	my $skip = <$in>;
+	print $out (@_[1]."\n") if (@_[1] ne "\%remove\%");
+	while (<$in>) {
+		print $out $_;
+		print "writing ".$_;
+	}
+	close $out;
+	system("mv $filename.new $filename");
+}
+
+
 while () {
 
-$filename = "$FindBin::Bin/../__init__";
 open(FH, '<', $filename) or die $!;
 
 @lines = ();
@@ -20,7 +40,6 @@ $line = @lines[$index];
 chomp $line;
 
 $checkSuccess = 0;
-
 if ((rindex $line, " - ", 0) == 0) {
 	say("instructions are as follows:");
 	say($line);
@@ -42,30 +61,26 @@ if ((rindex $line, " - ", 0) == 0) {
 	print "THIS WAS THE EXACT LINE\n";
 	print $line;
 	print "THIS WAS THE EXACT LINE\n";
-	print "replace with > ";
-	$newLine = <STDIN>;
-	chomp $newLine;
-
-	if (not $newLine eq "\%replace\%") {
-		$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
-	} else {
-		$replaceTheLine = qx("sed -i '".$index."d' $filename");
-	}
+	print "replace with >|";
+	$replacementLine = <STDIN>;
+	chomp $replacementLine;
+	ReplaceLine($index, $replacementLine);
 	next;
 }
 
 if ($checkSuccess) {
-	print("success? (y/m/n) > ");
+	print("success? (y/m/n) >|");
 	while ($success = <STDIN>) {
 		chomp $success;
 		if ($success eq "y") {
-			$replaceTheLine = qx("sed -i '".$index."d' $filename");
+			$replacementLine = "\%remove\%";
+			ReplaceLine($index, $replacementLine);
 			last;
 		} elsif ($success eq "m") {
-			print "replace with > ";
-			$newLine = <STDIN>;
-			chomp $newLine;
-			$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
+			print "replace with >|";
+			$replacementLine = <STDIN>;
+			chomp $replacementLine;
+			ReplaceLine($index, $replacementLine);
 			last;
 		} elsif ($success eq "n") {
 			last;
