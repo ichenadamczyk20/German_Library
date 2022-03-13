@@ -7,7 +7,6 @@ sub ReplaceLine {
 	use integer;
 	open my $in, '<', $filename or die $!;
 	open my $out, '>', "$filename.new" or die $!;
-	say("replace line " . @_[0]);
 	while (<$in>) {
 		print $out $_;
 		last if $. == @_[0];
@@ -16,7 +15,6 @@ sub ReplaceLine {
 	print $out (@_[1]."\n") if (@_[1] ne "\%remove\%");
 	while (<$in>) {
 		print $out $_;
-		print "writing ".$_;
 	}
 	close $out;
 	system("mv $filename.new $filename");
