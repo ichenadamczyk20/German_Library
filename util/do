@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+use FindBin
+
+while () {
+
+$filename = "$FindBin::Bin/../__init__";
+open(FH, '<', $filename) or die $!;
+
+@lines = ();
+
+while (<FH>) {
+	push @lines, $_;
+}
+
+$index = rand @lines;
+
+$line = @lines[$index];
+
+chomp $line;
+
+if (rindex $line, " - ", 0 == 0) {
+	print substr $line, 4, -2;
+	print "\n";
+	$useless = qx!bash!;
+} elsif (rindex $line, " ! ", 0 == 0) {
+	$filename = $line =~ /^(.*)\s\"/;
+	$comment = $line =~ /\"(.*)\"$/;
+	print $comment;
+	print "\n";
+	$ready = <STDIN>;
+	$openNano = qx!nano $filename!;
+
+	print("success? (y/m/n) > ");
+	while ($success = <STDIN>) {
+		chomp $success;
+		if $success eq "y" {
+			$replaceTheLine = qx("sed -i '".$index."d' $filename");
+			last;
+		} elsif $success eq "m" {
+			print "\nreplace with > ";
+			$newLine = <STDIN>;
+			chomp $newLine;
+			$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
+			last;
+		} elsif $success eq "n" {
+			last;
+		}
+	}
+	
+} else {
+	print "THIS WAS THE EXACT LINE\n";
+	print $line;
+	print "THIS WAS THE EXACT LINE\n";
+	print "replace with > ";
+	$newLine = <STDIN>;
+	chomp $newLine;
+
+	if (not $newLine eq "\%replace\%") {
+		$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
+	} else {
+		$replaceTheLine = qx("sed -i '".$index."d' $filename");
+	}
+	next;
+}
+
+
+last;
+}
