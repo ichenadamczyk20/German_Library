@@ -1,4 +1,5 @@
  - "organize the german topics"
  - "make the example text files for each of them"
  - "make the main perl file"
-verb_prefixes.list "please add all separable and inseparable verb prefixes"
+verb-prefixes.list "please add example verbs for each of these topics"
+practice-websites.list "please add all grammar and flashcard german practice websites here"
