@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use FindBin
+use FindBin;
 
 while () {
 
@@ -19,10 +19,12 @@ $line = @lines[$index];
 chomp $line;
 
 if (rindex $line, " - ", 0 == 0) {
+	print "instructions are as follows: \n";
 	print substr $line, 4, -2;
 	print "\n";
 	$useless = qx!bash!;
 } elsif (rindex $line, " ! ", 0 == 0) {
+	print "opening file. instructions are as follows: \n";
 	$filename = $line =~ /^(.*)\s\"/;
 	$comment = $line =~ /\"(.*)\"$/;
 	print $comment;
@@ -33,16 +35,16 @@ if (rindex $line, " - ", 0 == 0) {
 	print("success? (y/m/n) > ");
 	while ($success = <STDIN>) {
 		chomp $success;
-		if $success eq "y" {
+		if ($success eq "y") {
 			$replaceTheLine = qx("sed -i '".$index."d' $filename");
 			last;
-		} elsif $success eq "m" {
+		} elsif ($success eq "m") {
 			print "\nreplace with > ";
 			$newLine = <STDIN>;
 			chomp $newLine;
 			$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
 			last;
-		} elsif $success eq "n" {
+		} elsif ($success eq "n") {
 			last;
 		}
 	}
