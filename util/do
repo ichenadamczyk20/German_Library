@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use FindBin;
+use feature qw(say);
 
 while () {
 
@@ -18,37 +19,25 @@ $line = @lines[$index];
 
 chomp $line;
 
-if (rindex $line, " - ", 0 == 0) {
-	print "instructions are as follows: \n";
-	print substr $line, 4, -2;
-	print "\n";
-	$useless = qx!bash!;
-} elsif (rindex $line, " ! ", 0 == 0) {
-	print "opening file. instructions are as follows: \n";
-	$filename = $line =~ /^(.*)\s\"/;
-	$comment = $line =~ /\"(.*)\"$/;
-	print $comment;
-	print "\n";
-	$ready = <STDIN>;
-	$openNano = qx!nano $filename!;
+$checkSuccess = 0;
 
-	print("success? (y/m/n) > ");
-	while ($success = <STDIN>) {
-		chomp $success;
-		if ($success eq "y") {
-			$replaceTheLine = qx("sed -i '".$index."d' $filename");
-			last;
-		} elsif ($success eq "m") {
-			print "\nreplace with > ";
-			$newLine = <STDIN>;
-			chomp $newLine;
-			$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
-			last;
-		} elsif ($success eq "n") {
-			last;
-		}
-	}
-	
+if ((rindex $line, " - ", 0) == 0) {
+	say("instructions are as follows:");
+	say($line);
+	say("=" x 50);
+	$useless = system(bash);
+	say("=" x 50);
+	$checkSuccess = 1;
+} elsif ((rindex $line, " ! ", 0) == 0) {
+	say("opening file. instructions are as follows:");
+	@match1 = $line =~ /\!\s(.*)\s\"/;
+	@match2 = $line =~ /\"(.*)\"$/;
+	$filename = @match1[0];
+	$comment = @match2[0];
+	say("$filename $comment");
+	$ready = <STDIN>;
+	$openNano = system("nano $filename");
+	$checkSuccess = 1;
 } else {
 	print "THIS WAS THE EXACT LINE\n";
 	print $line;
@@ -65,6 +54,25 @@ if (rindex $line, " - ", 0 == 0) {
 	next;
 }
 
+if ($checkSuccess) {
+	print("success? (y/m/n) > ");
+	while ($success = <STDIN>) {
+		chomp $success;
+		if ($success eq "y") {
+			$replaceTheLine = qx("sed -i '".$index."d' $filename");
+			last;
+		} elsif ($success eq "m") {
+			print "replace with > ";
+			$newLine = <STDIN>;
+			chomp $newLine;
+			$replaceTheLine = qx("sed -i '".$index."s/.*/$newLine/' $filename");
+			last;
+		} elsif ($success eq "n") {
+			last;
+		}
+	}
+
+}
 
 last;
 }
