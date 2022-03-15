@@ -1,0 +1,91 @@
+#!/usr/bin/perl
+use FindBin;
+use feature qw(say);
+
+$filename = "$FindBin::Bin/../__init__";
+sub ReplaceLine {
+	use integer;
+	open my $in, '<', $filename or die $!;
+	open my $out, '>', "$filename.new" or die $!;
+	while (<$in>) {
+		print $out $_ if @_[0] != 0;
+		last if $. == @_[0];
+	}
+	my $skip = <$in>;
+	print $out (@_[1]."\n") if (@_[1] ne "\%remove\%");
+	while (<$in>) {
+		print $out $_;
+	}
+	close $out;
+	system("mv $filename.new $filename");
+}
+
+
+while () {
+
+open(FH, '<', $filename) or die $!;
+
+@lines = ();
+
+while (<FH>) {
+	push @lines, $_;
+}
+
+$index = rand @lines;
+
+$line = @lines[$index];
+
+chomp $line;
+
+$checkSuccess = 0;
+if ((rindex $line, " - ", 0) == 0) {
+	say("instructions are as follows:");
+	say($line);
+	say("=" x 50);
+	$useless = system(bash);
+	say("=" x 50);
+	$checkSuccess = 1;
+} elsif ((rindex $line, " ! ", 0) == 0) {
+	say("opening file. instructions are as follows:");
+	@match1 = $line =~ /\!\s(.*)\s\"/;
+	@match2 = $line =~ /\"(.*)\"$/;
+	$filename = @match1[0];
+	$comment = @match2[0];
+	say("$filename $comment");
+	$ready = <STDIN>;
+	$openNano = system("nano $filename");
+	$checkSuccess = 1;
+} else {
+	print "THIS WAS THE EXACT LINE\n";
+	print $line;
+	print "THIS WAS THE EXACT LINE\n";
+	print "replace with >|";
+	$replacementLine = <STDIN>;
+	chomp $replacementLine;
+	ReplaceLine($index, $replacementLine);
+	next;
+}
+
+if ($checkSuccess) {
+	print("success? (y/m/n) >|");
+	while ($success = <STDIN>) {
+		chomp $success;
+		if ($success eq "y") {
+			$replacementLine = "\%remove\%";
+			ReplaceLine($index, $replacementLine);
+			last;
+		} elsif ($success eq "m") {
+			print "replace with >|";
+			$replacementLine = <STDIN>;
+			chomp $replacementLine;
+			ReplaceLine($index, $replacementLine);
+			last;
+		} elsif ($success eq "n") {
+			last;
+		}
+	}
+
+}
+
+last;
+}
