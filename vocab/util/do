@@ -83,6 +83,7 @@ if ($checkSuccess) {
 		} elsif ($success eq "n") {
 			last;
 		}
+		print("success? (y/m/n) >!");
 	}
 
 }
