@@ -9,9 +9,9 @@ sub ReplaceLine {
 	open my $out, '>', "$filename.new" or die $!;
 	while (<$in>) {
 		print $out $_ if @_[0] != 0;
-		last if $. == @_[0];
+		last if $. >= @_[0];
 	}
-	my $skip = <$in>;
+	my $skip = <$in> if @_[0] != 0;
 	print $out (@_[1]."\n") if (@_[1] ne "\%remove\%");
 	while (<$in>) {
 		print $out $_;
@@ -20,6 +20,14 @@ sub ReplaceLine {
 	system("mv $filename.new $filename");
 }
 
+# for repl.it usage, since they don't have nano
+if (system("command -v nano") != -1) {
+    print(" < using nano > \n");
+    $EDITOR = "nano";
+} else {
+    print(" < using vi > \n");
+    $EDITOR = "vim";
+}
 
 while () {
 
@@ -53,7 +61,7 @@ if ((rindex $line, " - ", 0) == 0) {
 	$comment = @match2[0];
 	say("$filename $comment");
 	$ready = <STDIN>;
-	$openNano = system("nano $filename");
+	$openNano = system("$EDITOR $filename");
 	$checkSuccess = 1;
 } else {
 	print "THIS WAS THE EXACT LINE\n";
