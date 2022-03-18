@@ -30,7 +30,8 @@ sub InsertAnswer {
 		print $out $_ if @_[0] != 0;
 		last if $. >= @_[0];
 	}
-	print $out <$in>;
+	#my $skip = <$in>;
+	print $out (<$in>);
 	print $out "\n";
 	$datestring = localtime();
 	print $out ("### [$datestring]" . @_[1] . "\n");
@@ -40,6 +41,8 @@ sub InsertAnswer {
 	close $out;
 	system("mv $filename.new $filename");
 }
+
+@WORDS = ("die Arbeitsstelle", "Geld verdienen", "der Antrag");
 
 
 # for repl.it usage, since they don't have nano
@@ -52,15 +55,7 @@ if (system("command -v nano") != -1) {
 }
 
 system("rm $tempFile");
-while () {# for repl.it usage, since they don't have nano
-if (system("command -v nano") != -1) {
-    print(" < using nano > \n");
-    $EDITOR = "nano";
-} else {
-    print(" < using vi > \n");
-    $EDITOR = "vim";
-}
-
+while () {
 
 
 # questions start with ~~~, answers start with ###.
@@ -81,7 +76,7 @@ $line = @lines[$lineNumber];
 chomp $line;
 
 $addQuestion = rand 3;
-
+$word = @WORDS[rand @WORDS];
 
 open $fileCreation, '>>', $tempFile or die $!;
 print $fileCreation ("The following line is the question. Replace it with a single \% to remove and abort and \! to only abort. Otherwise, edit the question, leaving the triple ~" . "\n");
@@ -108,15 +103,18 @@ $elapsedTime = time() - $startTime;
 chomp $question;
 chomp $answer;
 if ($question eq "\%") {
-	ReplaceLine($lineNumber, "removed question " . $line);
-} elsif {
+	ReplaceLine($lineNumber, "removed question $line");
+} else {
 	if ($question !~ /^(\~){3}(.*)$/) {
 		$question = ("~" x 3) . $2;
+	}
+	if ($question =~ /\<WORD\>/) {
+		$question =~ s/\<WORD\>/$word/;
 	}
 	ReplaceLine($lineNumber, $question);
 }
 if ($question ne "\!" and $question ne "\%") {
-	InsertAnswer($lineNumber, $answer)
+	InsertAnswer($lineNumber, $answer);
 }
 
 
