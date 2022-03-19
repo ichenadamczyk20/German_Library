@@ -21,11 +21,14 @@ sub ReplaceLine {
 }
 
 # for repl.it usage, since they don't have nano
-if (system("command -v nano") != -1) {
+if ("$^O" eq "MSWin32") {
+    print(" < using notepad > \n");
+    $EDITOR = "notepad";
+} elsif (qx/command -v nano/ ne -1) {
     print(" < using nano > \n");
     $EDITOR = "nano";
 } else {
-    print(" < using vi > \n");
+    print(" < using vim > \n");
     $EDITOR = "vim";
 }
 
