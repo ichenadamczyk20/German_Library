@@ -110,10 +110,10 @@ $lineNumber = @questionLines[$index];
 $line = @lines[$lineNumber];
 chomp $line;
 
-$addQuestion = rand 1;
+$addQuestion = rand 3;
 $word = @WORDS[rand @WORDS];
 
-$doRandomWord = (0) < 1;
+$doRandomWord = (rand 10) < 1;
 if ($doRandomWord) {
 	$line = "[*] Was bedeutet \"$word\"?";
 	$lineNumber = (scalar @lines) * 2;
@@ -164,7 +164,7 @@ if ($question ne "\!" and $question ne "\%") {
 $elapsedMinutes = int($elapsedTime / 60);
 $elapsedSeconds = $elapsedTime % 60;
 say($question);
-printf("This question took you %d:%0.2f !\n", $elapsedMinutes, $elapsedSeconds);
+printf("Deine Antwortzeit ist %d:%0.2f !\n", $elapsedMinutes, $elapsedSeconds);
 # printf("%0.1f milliseconds\n", $elapsed * 1000);
 # printf("%d microseconds\n", $elapsed * 1000 * 1000);
 # printf("%d nanoseconds\n", $elapsed * 1000 * 1000 * 1000);
