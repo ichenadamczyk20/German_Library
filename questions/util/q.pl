@@ -27,11 +27,11 @@ sub InsertAnswer {
 	open my $in, '<', $filename or die $!;
 	open my $out, '>', "$filename.new" or die $!;
 	while (<$in>) {
-		print $out $_ if @_[0] != 0;
+		print $out $_;
 		last if $. >= @_[0];
 	}
-	#my $skip = <$in>;
-	print $out (<$in>);
+	my $nextLine = <$in>;
+	print $out $nextLine;
 	print $out "\n";
 	$datestring = localtime();
 	print $out ("### [$datestring]" . @_[1] . "\n");
@@ -42,19 +42,54 @@ sub InsertAnswer {
 	system("mv $filename.new $filename");
 }
 
+sub InsertQuestion {
+	use integer;
+	open my $in, '<', $filename or die $!;
+	open my $out, '>', "$filename.new" or die $!;
+	my $foundIt = 0;
+	my $lineNumber = -1;
+	while (<$in>) {
+		print $out $_;
+		chomp $_;
+		$lineNumber = $.;
+		if ($_ ne @_[0]) {
+			$foundIt = 0;
+		} else {
+			$foundIt = 1;
+			last;
+		}
+	}
+	if ($foundIt == 1) {
+		system("rm $filename.new");
+		return($lineNumber - 1);
+	} else {
+		print $out "\n";
+		print $out @_[0];
+		system("mv $filename.new $filename");
+		return($lineNumber + 1);
+	}
+}
+
+
 @WORDS = ("die Arbeitsstelle", "Geld verdienen", "der Antrag");
 
 
 # for repl.it usage, since they don't have nano
-if (system("command -v nano") != -1) {
+if ("$^O" eq "MSWin32") {
+	print(" < using notepad > \n");
+	$EDITOR = "notepad";
+} elsif (qx/command -v nano/ ne -1) {
     print(" < using nano > \n");
     $EDITOR = "nano";
 } else {
-    print(" < using vi > \n");
+    print(" < using vim > \n");
     $EDITOR = "vim";
 }
 
-system("rm $tempFile");
+say("loading questions");
+say("~~~ Wie heißt du?");
+$name = <STDIN>;
+
 while () {
 
 
@@ -64,7 +99,7 @@ open('FH', '<', $filename) or die $!;
 @questionLines = ();
 while(<FH>) {
 	push @lines, $_;
-	if ($_ =~ /^\~\~\~$/) {
+	if ($_ =~ m/^\~\~\~/) {
 		push @questionLines, ($. - 1);
 	}
 }
@@ -75,10 +110,16 @@ $lineNumber = @questionLines[$index];
 $line = @lines[$lineNumber];
 chomp $line;
 
-$addQuestion = rand 3;
+$addQuestion = rand 1;
 $word = @WORDS[rand @WORDS];
 
-open $fileCreation, '>>', $tempFile or die $!;
+$doRandomWord = (0) < 1;
+if ($doRandomWord) {
+	$line = "[*] Was bedeutet \"$word\"?";
+	$lineNumber = (scalar @lines) * 2;
+}
+
+open $fileCreation, '>', $tempFile or die $!;
 print $fileCreation ("The following line is the question. Replace it with a single \% to remove and abort and \! to only abort. Otherwise, edit the question, leaving the triple ~" . "\n");
 print $fileCreation ($line . "\n");
 print $fileCreation ("+++" . "\n");
@@ -87,11 +128,13 @@ close $fileCreation;
 
 $startTime = time();
 
-system("$editor $tempFile");
+system("$EDITOR $tempFile");
 
 open $in, '<', $tempFile or die $!;
 $header = <$in>;
-$question = <$in>;
+$questionLine = <$in>;
+$question = $questionLine if (not($doRandomWord));
+$question = $line if ($doRandomWord);
 $blankLine = <$in>;
 $answer = "";
 while(<$in>) {
@@ -104,34 +147,41 @@ chomp $question;
 chomp $answer;
 if ($question eq "\%") {
 	ReplaceLine($lineNumber, "removed question $line");
-} else {
+} elsif (not($doRandomWord)) {
 	if ($question !~ /^(\~){3}(.*)$/) {
 		$question = ("~" x 3) . $2;
 	}
-	if ($question =~ /\<WORD\>/) {
-		$question =~ s/\<WORD\>/$word/;
-	}
 	ReplaceLine($lineNumber, $question);
+}
+if ($doRandomWord) {
+	$lineNumber = InsertQuestion($question);
 }
 if ($question ne "\!" and $question ne "\%") {
 	InsertAnswer($lineNumber, $answer);
 }
 
 
-
 $elapsedMinutes = int($elapsedTime / 60);
 $elapsedSeconds = $elapsedTime % 60;
+say($question);
 printf("This question took you %d:%0.2f !\n", $elapsedMinutes, $elapsedSeconds);
 # printf("%0.1f milliseconds\n", $elapsed * 1000);
 # printf("%d microseconds\n", $elapsed * 1000 * 1000);
 # printf("%d nanoseconds\n", $elapsed * 1000 * 1000 * 1000);
 
+$continuing = <STDIN>;
 
 if ($addQuestion < 1) {
 	say("=" x 25);
 	print("type a question! (\% to cancel) > ");
 	$question = <STDIN>;
 	chomp $question;
+	if ($question !~ /^(\~){3}(.*)$/) {
+#		print("You're asking me\n");
+#		@questionFrag = /^(\~)+(.*)$/;
+#		print($questionFrag[1]);
+		$question = "~~~ $question";
+	}
 	if ($question ne "\%") {
 		open $out, '>>', $filename or die $!;
 		print $out "\n";
