@@ -4,6 +4,8 @@ use feature qw(say);
 use Time::HiRes qw(time);
 
 $filename = "$FindBin::Bin/../questions";
+$vocabDir = "$FindBin::Bin/../../vocab";
+@VOCAB = ("$vocabDir/lektion1.list", "$vocabDir/lektion6.list");
 $tempFile = "$FindBin::Bin/../tmp.tmp";
 sub ReplaceLine {
         use integer;
@@ -70,9 +72,17 @@ sub InsertQuestion {
 	}
 }
 
-
-@WORDS = ("die Arbeitsstelle", "Geld verdienen", "der Antrag");
-
+@WORDS = ();
+for $file (@VOCAB) {
+	open my $in, '<', $file or die $!;
+	while (<$in>) {
+		chomp $_;
+		if ($_ =~ /~(\=|\%|\$|\@\!) (.*)$/) {
+			push @WORDS, $2;
+		}
+	}
+	close $in;
+}
 
 # for repl.it usage, since they don't have nano
 if ("$^O" eq "MSWin32") {
