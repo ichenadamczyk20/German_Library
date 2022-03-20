@@ -77,7 +77,9 @@ for $file (@VOCAB) {
 	open my $in, '<', $file or die $!;
 	while (<$in>) {
 		chomp $_;
+		say("$_");
 		if ($_ =~ /~(\=|\%|\$|\@\!) (.*)$/) {
+			say("$_ => $2");
 			push @WORDS, $2;
 		}
 	}
@@ -158,10 +160,12 @@ chomp $answer;
 if ($question eq "\%") {
 	ReplaceLine($lineNumber, "removed question $line");
 } elsif (not($doRandomWord)) {
-	if ($question !~ /^(\~){3}(.*)$/) {
-		$question = ("~" x 3) . $2;
+	if ($question ne "\!") {
+		if ($question !~ /^(\~){3}(.*)$/) {
+			$question = ("~" x 3) . $2;
+		}
+		ReplaceLine($lineNumber, $question);
 	}
-	ReplaceLine($lineNumber, $question);
 }
 if ($doRandomWord) {
 	$lineNumber = InsertQuestion($question);
@@ -182,7 +186,7 @@ printf("Deine Antwortzeit ist %d:%0.2f !\n", $elapsedMinutes, $elapsedSeconds);
 $continuing = <STDIN>;
 
 if ($addQuestion < 1) {
-	say("=" x 25);
+	say("=" x 32);
 	print("type a question! (\% to cancel) > ");
 	$question = <STDIN>;
 	chomp $question;
@@ -192,14 +196,14 @@ if ($addQuestion < 1) {
 #		print($questionFrag[1]);
 		$question = "~~~ $question";
 	}
-	if ($question ne "\%") {
+	if ($question ne "~~~ \%") {
 		open $out, '>>', $filename or die $!;
 		print $out "\n";
 		print $out "\n";
 		print $out ($question . "\n");
 		close $out;
 	}
-	say("=" x 25);
+	say("=" x 32);
 	say("");
 }
 
