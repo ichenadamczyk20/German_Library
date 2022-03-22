@@ -41,7 +41,7 @@ sub InsertAnswer {
 		print $out $_;
 	}
 	close $out;
-	system("mv $filename.new $filename");
+	system("$MV $filename.new $filename");
 }
 
 sub InsertQuestion {
@@ -62,12 +62,12 @@ sub InsertQuestion {
 		}
 	}
 	if ($foundIt == 1) {
-		system("rm $filename.new");
+		system("$RM $filename.new");
 		return($lineNumber - 1);
 	} else {
 		print $out "\n";
 		print $out @_[0];
-		system("mv $filename.new $filename");
+		system("$MV $filename.new $filename");
 		return($lineNumber + 1);
 	}
 }
@@ -85,9 +85,13 @@ for $file (@VOCAB) {
 }
 
 # for repl.it usage, since they don't have nano
+$RM = "rm";
+$MV = "mv";
 if ("$^O" eq "MSWin32") {
 	print(" < using notepad > \n");
 	$EDITOR = "notepad";
+    $RM = "del";
+    $MV = "move";
 } elsif (qx/command -v nano/ ne -1) {
     print(" < using nano > \n");
     $EDITOR = "nano";

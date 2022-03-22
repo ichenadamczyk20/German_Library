@@ -17,13 +17,15 @@ sub ReplaceLine {
 		print $out $_;
 	}
 	close $out;
-	system("mv $filename.new $filename");
+	system("$MV $filename.new $filename");
 }
 
 # for repl.it usage, since they don't have nano
+$MV = "mv";
 if ("$^O" eq "MSWin32") {
     print(" < using notepad > \n");
     $EDITOR = "notepad";
+    $MV = "move";
 } elsif (qx/command -v nano/ ne -1) {
     print(" < using nano > \n");
     $EDITOR = "nano";
