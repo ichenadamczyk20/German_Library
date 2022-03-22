@@ -1,0 +1,122 @@
+$ die Abfahrtszeit -en
+$ die Abflughalle -n
+$ die Abflugzeit -en
+$ das Amt ¨-er
+$ der Ankunftsbereich -e
+$ der Anschluss -¨e
+$ der Antrag -¨e
+$ der Asylbewerber --
+$ der Ausflug -¨e
+$ das Badetuch -¨er
+$ das Strandtuch -¨er
+$ der Bahnsteig -e
+$ die Behörde -n
+$ das Bergsteigen
+$ der Bettler --
+$ das Segelboot -e
+$ die Bordkarte -n
+$ der Campingplatz -¨e
+$ das Denkmal -¨er
+$ das Einwohnermaldeamt -¨er
+$ die Ernte
+$ der Ferienort -e
+$ die Ferienwohnung -en
+$ das Fischen -
+$ der Flugbegleiter --
+$ der Flugsteig -e
+$ das Abfluggate -s
+$ der Geldwechsel
+$ die Gepäckausgabe
+$ der Geschamck -¨er
+$ die Gleitzeit
+$ die Hürde -n
+$ das Kanufahren
+$ die Kreuzfahrt -en
+$ die Landung
+$ der Skilanglauf
+$ der Laut -e
+$ das Märchen -
+$ die (Halb/Voll)pension
+$ die Pension -en
+$ der Personalausweis -e
+$ der Pilger --
+$ die Pilgerschaft
+$ der (Fenster/gang)platz -¨e
+$ die Preisklasse -n
+$ der Prospekt -e
+$ der Schaffner --
+$ der Schein
+$ der Schlafsack -¨e
+$ das Seebad -¨er
+$ die Sehenswürdigkeit -en
+$ die Sicherheitskontrolle -n
+$ die Skiausrüstung
+$ der Skihang -¨e
+$ der Skilift -e
+$ der Skipass -¨e
+$ der Skiurlaubsort
+$ der Sonnenbrand
+$ die Sonnen(schutz)creme
+$ der (Strand)sonnenschirm -e
+$ das Surfbrett -er
+$ die Unterkunft -¨e
+$ das Urlaubsziel -e
+$ das Verkehrsmittel
+$ die Autovermietung
+$ die Verspätung
+$ die Verwechslung
+$ die Polizeiwache -n
+$ der Wanderer --
+$ der Wanderweg -e
+$ das Wirtshaus -¨er
+$ das Wohnmobil -e
+$ das Zelt -e
+
+! Zimmer frei
+! an Bord
+
+% abschieben
+% an Bord (des Flugzeuges) gehen
+% anbieten
+% besichtigen
+% bewundern
+% einchecken
+% enttäuschen
+% erkunden
+% flehen
+% messen
+% mieten
+% organisieren
+% pflücken
+% (in der) Schlange stehen
+% schnorcheln
+% segeln
+% sich entspannen
+% sich lohnen
+% sich ummelden
+% sonnenbaden
+% stöhnen
+% streicheln
+% verlängern
+% wandern
+% surfen
+% treiben
+
+@ abgelaufen
+@ anstregend
+@ (voll) belegt
+@ chaotisch
+@ exotisch
+@ fristriert
+@ Fünf-Sterne
+@ gestrichen
+@ luxuriös
+@ ordentlich
+@ preiswort
+@ ratsam
+@ stressig
+@ verschieden
+@ versiegelt
+@ verspätet
+@ vorläufig
+@ zollfrei
