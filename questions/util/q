@@ -21,7 +21,7 @@ sub ReplaceLine {
                 print $out $_;
         }
         close $out;
-        system("mv $filename.new $filename");
+        system("$MV $filename.new $filename");
 }
 
 sub InsertAnswer {
